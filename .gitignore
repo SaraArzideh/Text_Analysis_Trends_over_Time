@@ -1,0 +1,19 @@
+# Ignore data files
+*.xlsx
+*.csv
+
+# Ignore Python compiled files and directories
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore directories created by virtual environments
+env/
+venv/
+.venv/
+.env/
+
+# Additional files and folders to ignore
+.DS_Store   # For macOS users
+.idea/      # For PyCharm project settings
