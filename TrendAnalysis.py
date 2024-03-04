@@ -145,31 +145,32 @@ y3 = [yearly_citations_for_concept('utility').get(year, 0) for year in years]
 
 # Plot
 sns.set_style(style="whitegrid")
-fig = plt.figure(figsize=(16, 10))
+fig = plt.figure(figsize=(30, 10))
 ax = fig.add_subplot(111, projection='3d')
 
-plt.rcParams.update({'font.size': 12})  # djust font size
+plt.rcParams.update({'font.size': 10})  # font size
 
 # Plot each concept as a separate line in the 3D space
-ax.plot(x, y1, zs=2, zdir='y', label='User-Centred', linewidth=2, color='blue')
-ax.plot(x, y2, zs=1, zdir='y', label='Usability', linewidth=2, color='red')
-ax.plot(x, y3, zs=0, zdir='y', label='Utility', linewidth=2, color='green')
+ax.plot(x, y1, zs=2, zdir='y', label='User-Centred', linewidth=1.5, color='blue')
+ax.plot(x, y2, zs=1, zdir='y', label='Usability', linewidth=1.5, color='red')
+ax.plot(x, y3, zs=0, zdir='y', label='Utility', linewidth=1.5, color='green')
 
-ax.set_xlabel('Year', fontsize=10)
-ax.set_ylabel('Concept', fontsize=12)
-ax.set_zlabel('Citations', fontsize=12)
+ax.set_xlabel('', fontsize=10)
+ax.set_ylabel('', fontsize=10)
+ax.set_zlabel('Citations', fontsize=10)
 ax.set_yticks([0, 1, 2])
 ax.set_yticklabels(['Utility', 'Usability', 'User-Centred'])
 
 # Handling labels
+label_fontsize = 10
 display_years = range(0, len(years), 2)  # Adjust years step
 
 ax.set_xticks(display_years)
-ax.set_xticklabels([years[i] for i in display_years], rotation=90)
+ax.set_xticklabels([years[i] for i in display_years], rotation=90, fontsize=label_fontsize)
 
 # Set the view angle
 ax.view_init(elev=20, azim=120)
 
-plt.title('3D View of Concept Citations Over Time', fontsize=16)
+plt.title('3D View of Concept Citations Over Time', fontsize=12)
 plt.legend()
 plt.show()
