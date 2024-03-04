@@ -71,11 +71,26 @@ relevant_columns.to_csv('filtered_articles_subset.csv', index=False)
 # Group by year and sum citations
 citation_trends = scopus_df.groupby('Year')['Cited by'].sum().reset_index()
 
+# Plots
+
+# Function to calculate yearly citations for each concept
+def yearly_citations_for_concept(concept):
+    yearly_citations = scopus_df[scopus_df['Concepts'].str.contains(concept)].groupby('Year')['Cited by'].sum()
+    return yearly_citations
+
+# Calculate yearly citations for each concept
+user_centred_citations = yearly_citations_for_concept('user-centred')
+usability_citations = yearly_citations_for_concept('usability')
+utility_citations = yearly_citations_for_concept('utility')
+
 # Plot
-plt.figure(figsize=(10,6))
-sns.lineplot(data=citation_trends, x='Year', y='Cited by')
-plt.title('Citation Trends Over Time')
+plt.figure(figsize=(12, 6))
+plt.plot(user_centred_citations.index, user_centred_citations, label='User-Centred')
+plt.plot(usability_citations.index, usability_citations, label='Usability')
+plt.plot(utility_citations.index, utility_citations, label='Utility')
+#sns.lineplot(data=citation_trends, x='Year', y='Cited by')
+plt.title('Yearly citations for each concept')
 plt.xlabel('Year')
-plt.ylabel('Total Citations')
-plt.grid(True)
+plt.ylabel('Citations')
+plt.legend()
 plt.show()
