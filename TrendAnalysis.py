@@ -71,7 +71,7 @@ relevant_columns.to_csv('filtered_articles_subset.csv', index=False)
 # Group by year and sum citations
 citation_trends = scopus_df.groupby('Year')['Cited by'].sum().reset_index()
 
-# Plots
+## Citations of Each of the Three Concepts per Year
 
 # Function to calculate yearly citations for each concept
 def yearly_citations_for_concept(concept):
@@ -83,7 +83,7 @@ user_centred_citations = yearly_citations_for_concept('user-centred')
 usability_citations = yearly_citations_for_concept('usability')
 utility_citations = yearly_citations_for_concept('utility')
 
-# Plot
+# Plot 1
 plt.figure(figsize=(12, 6))
 plt.plot(user_centred_citations.index, user_centred_citations, label='User-Centred')
 plt.plot(usability_citations.index, usability_citations, label='Usability')
@@ -92,5 +92,59 @@ plt.plot(utility_citations.index, utility_citations, label='Utility')
 plt.title('Yearly citations for each concept')
 plt.xlabel('Year')
 plt.ylabel('Citations')
+plt.legend()
+plt.show()
+
+## Changing Frequency of Each of the Three Concepts Over the Years
+# Function to count occurrences of each concept per year
+def count_concept_occurrences(concept):
+    yearly_counts = scopus_df[scopus_df['Concepts'].str.contains(concept)].groupby('Year')['Concepts'].count()
+    return yearly_counts
+
+# Count occurrences for each concept
+user_centred_counts = count_concept_occurrences('user-centred')
+usability_counts = count_concept_occurrences('usability')
+utility_counts = count_concept_occurrences('utility')
+
+# Plot 2
+plt.figure(figsize=(12, 6))
+plt.plot(user_centred_counts.index, user_centred_counts, label='User-Centred')
+plt.plot(usability_counts.index, usability_counts, label='Usability')
+plt.plot(utility_counts.index, utility_counts, label='Utility')
+plt.title('Frequency of Each Concept Over the Years')
+plt.xlabel('Year')
+plt.ylabel('Frequency')
+plt.legend()
+plt.show()
+
+## 3D Graph Showing the Changes of Concepts Over the Years and Their Citation Frequencies
+
+from mpl_toolkits.mplot3d import Axes3D
+
+# Prepare data for 3D plot
+years = scopus_df['Year'].unique()
+x = range(len(years))
+y1 = [yearly_citations_for_concept('user-centred').get(year, 0) for year in years]
+y2 = [yearly_citations_for_concept('usability').get(year, 0) for year in years]
+y3 = [yearly_citations_for_concept('utility').get(year, 0) for year in years]
+
+# Plot 3
+fig = plt.figure(figsize=(12, 8))
+ax = fig.add_subplot(111, projection='3d')
+
+# Plot each concept as a separate line in the 3D space
+ax.plot(x, y1, zs=0, zdir='y', label='User-Centred')
+ax.plot(x, y2, zs=1, zdir='y', label='Usability')
+ax.plot(x, y3, zs=2, zdir='y', label='Utility')
+
+ax.set_xlabel('Year')
+ax.set_ylabel('Concept')
+ax.set_zlabel('Citations')
+ax.set_yticks([0, 1, 2])
+ax.set_yticklabels(['User-Centred', 'Usability', 'Utility'])
+ax.set_xticks(range(len(years)))
+ax.set_xticklabels(years, rotation=90)
+
+plt.title('3D View of Concept Citations Over Time')
 plt.legend()
 plt.show()
