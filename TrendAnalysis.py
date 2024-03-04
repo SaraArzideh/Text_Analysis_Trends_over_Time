@@ -71,7 +71,8 @@ relevant_columns.to_csv('filtered_articles_subset.csv', index=False)
 # Group by year and sum citations
 citation_trends = scopus_df.groupby('Year')['Cited by'].sum().reset_index()
 
-## Citations of Each of the Three Concepts per Year
+# PLOT 1
+# Citations of Each of the Three Concepts per Year
 
 # Function to calculate yearly citations for each concept
 def yearly_citations_for_concept(concept):
@@ -83,19 +84,26 @@ user_centred_citations = yearly_citations_for_concept('user-centred')
 usability_citations = yearly_citations_for_concept('usability')
 utility_citations = yearly_citations_for_concept('utility')
 
-# Plot 1
-plt.figure(figsize=(12, 6))
-plt.plot(user_centred_citations.index, user_centred_citations, label='User-Centred')
-plt.plot(usability_citations.index, usability_citations, label='Usability')
-plt.plot(utility_citations.index, utility_citations, label='Utility')
+# Plot
+sns.set_style(style="whitegrid")
+plt.figure(figsize=(14, 7))
+plt.rcParams.update({'font.size': 12})   # Adjust font size
+
+plt.plot(user_centred_citations.index, user_centred_citations, label='User-Centred', linewidth=2, color='blue')
+plt.plot(usability_citations.index, usability_citations, label='Usability', linewidth=2, color='red')
+plt.plot(utility_citations.index, utility_citations, label='Utility', linewidth=2, color='green')
+
 #sns.lineplot(data=citation_trends, x='Year', y='Cited by')
-plt.title('Yearly citations for each concept')
-plt.xlabel('Year')
-plt.ylabel('Citations')
+plt.title('Yearly citations for each concept', fontsize=16)
+plt.xlabel('Year', fontsize=14)
+plt.ylabel('Citations', fontsize=14)
+plt.xticks(rotation=45)
 plt.legend()
 plt.show()
 
-## Changing Frequency of Each of the Three Concepts Over the Years
+# PLOT 2
+# Changing Frequency of Each of the Three Concepts Over the Years
+
 # Function to count occurrences of each concept per year
 def count_concept_occurrences(concept):
     yearly_counts = scopus_df[scopus_df['Concepts'].str.contains(concept)].groupby('Year')['Concepts'].count()
@@ -106,45 +114,62 @@ user_centred_counts = count_concept_occurrences('user-centred')
 usability_counts = count_concept_occurrences('usability')
 utility_counts = count_concept_occurrences('utility')
 
-# Plot 2
-plt.figure(figsize=(12, 6))
-plt.plot(user_centred_counts.index, user_centred_counts, label='User-Centred')
-plt.plot(usability_counts.index, usability_counts, label='Usability')
-plt.plot(utility_counts.index, utility_counts, label='Utility')
-plt.title('Frequency of Each Concept Over the Years')
-plt.xlabel('Year')
-plt.ylabel('Frequency')
+# Plot
+sns.set_style(style="whitegrid")
+plt.figure(figsize=(14, 7))
+plt.rcParams.update({'font.size': 12})   # Adjust font size
+
+plt.plot(user_centred_counts.index, user_centred_counts, label='User-Centred', linewidth=2, color='blue')
+plt.plot(usability_counts.index, usability_counts, label='Usability', linewidth=2, color='red')
+plt.plot(utility_counts.index, utility_counts, label='Utility', linewidth=2, color='green')
+
+plt.title('Frequency of Each Concept Over the Years', fontsize=14)
+plt.xlabel('Year', fontsize=14)
+plt.ylabel('Frequency', fontsize=14)
+plt.xticks(rotation=45)
 plt.legend()
 plt.show()
 
+# PLOT 3
 ## 3D Graph Showing the Changes of Concepts Over the Years and Their Citation Frequencies
 
 from mpl_toolkits.mplot3d import Axes3D
 
 # Prepare data for 3D plot
-years = scopus_df['Year'].unique()
+years = sorted(scopus_df['Year'].unique())
 x = range(len(years))
+
 y1 = [yearly_citations_for_concept('user-centred').get(year, 0) for year in years]
 y2 = [yearly_citations_for_concept('usability').get(year, 0) for year in years]
 y3 = [yearly_citations_for_concept('utility').get(year, 0) for year in years]
 
-# Plot 3
-fig = plt.figure(figsize=(12, 8))
+# Plot
+sns.set_style(style="whitegrid")
+fig = plt.figure(figsize=(16, 10))
 ax = fig.add_subplot(111, projection='3d')
 
+plt.rcParams.update({'font.size': 12})  # djust font size
+
 # Plot each concept as a separate line in the 3D space
-ax.plot(x, y1, zs=0, zdir='y', label='User-Centred')
-ax.plot(x, y2, zs=1, zdir='y', label='Usability')
-ax.plot(x, y3, zs=2, zdir='y', label='Utility')
+ax.plot(x, y1, zs=2, zdir='y', label='User-Centred', linewidth=2, color='blue')
+ax.plot(x, y2, zs=1, zdir='y', label='Usability', linewidth=2, color='red')
+ax.plot(x, y3, zs=0, zdir='y', label='Utility', linewidth=2, color='green')
 
-ax.set_xlabel('Year')
-ax.set_ylabel('Concept')
-ax.set_zlabel('Citations')
+ax.set_xlabel('Year', fontsize=10)
+ax.set_ylabel('Concept', fontsize=12)
+ax.set_zlabel('Citations', fontsize=12)
 ax.set_yticks([0, 1, 2])
-ax.set_yticklabels(['User-Centred', 'Usability', 'Utility'])
-ax.set_xticks(range(len(years)))
-ax.set_xticklabels(years, rotation=90)
+ax.set_yticklabels(['Utility', 'Usability', 'User-Centred'])
 
-plt.title('3D View of Concept Citations Over Time')
+# Handling labels
+display_years = range(0, len(years), 2)  # Adjust years step
+
+ax.set_xticks(display_years)
+ax.set_xticklabels([years[i] for i in display_years], rotation=90)
+
+# Set the view angle
+ax.view_init(elev=20, azim=120)
+
+plt.title('3D View of Concept Citations Over Time', fontsize=16)
 plt.legend()
 plt.show()
