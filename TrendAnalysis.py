@@ -25,7 +25,9 @@ for index, row in thesaurus_df.iterrows():
 concept_groups = {
     'user-centred': ["user-centered", "user-centred", "user centered", "user-centric", "user centric", "user-centeric"],
     'usability': ["usability", "usabilities"],
-    'utility': ["utility", "Utility", "utilities", "Utilities"]
+    'utility': ["utility", "Utility", "utilities", "Utilities"],
+    'sustainability': ["Sustainability", "sustainable","Sustainable", "sustainabilities", "Sustainabilities"],
+    'considerations': ["Privacy", "privacy", "Security", "security", "Ethic", "ethic", "Ethics", "ethics"]
 }
 
 # Create a function that checks the presence of each concept in the 'Title', 'Abstract', and 'Author Keywords' columns 
@@ -117,7 +119,7 @@ utility_counts = count_concept_occurrences('utility')
 # Plot
 sns.set_style(style="whitegrid")
 plt.figure(figsize=(14, 7))
-plt.rcParams.update({'font.size': 12})   # Adjust font size
+plt.rcParams.update({'font.size': 12})
 
 plt.plot(user_centred_counts.index, user_centred_counts, label='User-Centred', linewidth=2, color='blue')
 plt.plot(usability_counts.index, usability_counts, label='Usability', linewidth=2, color='red')
@@ -139,9 +141,11 @@ from mpl_toolkits.mplot3d import Axes3D
 years = sorted(scopus_df['Year'].unique())
 x = range(len(years))
 
-y1 = [yearly_citations_for_concept('user-centred').get(year, 0) for year in years]
+y1 = [yearly_citations_for_concept('utility').get(year, 0) for year in years]
 y2 = [yearly_citations_for_concept('usability').get(year, 0) for year in years]
-y3 = [yearly_citations_for_concept('utility').get(year, 0) for year in years]
+y3 = [yearly_citations_for_concept('user-centred').get(year, 0) for year in years]
+y4 = [yearly_citations_for_concept('sustainability').get(year, 0) for year in years]
+y5 = [yearly_citations_for_concept('considerations').get(year, 0) for year in years]
 
 # Plot
 sns.set_style(style="whitegrid")
@@ -151,15 +155,18 @@ ax = fig.add_subplot(111, projection='3d')
 plt.rcParams.update({'font.size': 10})  # font size
 
 # Plot each concept as a separate line in the 3D space
-ax.plot(x, y1, zs=2, zdir='y', label='User-Centred', linewidth=1.5, color='blue')
+ax.plot(x, y1, zs=0, zdir='y', label='Utility', linewidth=1.5, color='green')
 ax.plot(x, y2, zs=1, zdir='y', label='Usability', linewidth=1.5, color='red')
-ax.plot(x, y3, zs=0, zdir='y', label='Utility', linewidth=1.5, color='green')
+ax.plot(x, y3, zs=2, zdir='y', label='User-Centred', linewidth=1.5, color='blue')
+ax.plot(x, y4, zs=3, zdir='y', label='Sustainability', linewidth=1.5, color='orange')
+ax.plot(x, y5, zs=4, zdir='y', label='Considerations', linewidth=1.5, color='purple')
+
 
 ax.set_xlabel('', fontsize=10)
 ax.set_ylabel('', fontsize=10)
 ax.set_zlabel('Citations', fontsize=10)
-ax.set_yticks([0, 1, 2])
-ax.set_yticklabels(['Utility', 'Usability', 'User-Centred'])
+ax.set_yticks([0, 1, 2, 3, 4])
+ax.set_yticklabels(['Utility', 'Usability', 'User-Centred', 'Sustainability', 'Considerations'],rotation=280, fontsize=10)
 
 # Handling labels
 label_fontsize = 10
